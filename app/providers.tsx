@@ -1,3 +1,7 @@
+/**
+ * Root providers component that wraps the application with necessary context providers
+ * including theme, toast notifications, and layout components.
+ */
 "use client";
 
 import { ReactNode } from "react";

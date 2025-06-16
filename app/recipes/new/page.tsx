@@ -1,43 +1,57 @@
-'use client';
+/**
+ * New Recipe Creation Page
+ *
+ * This page provides a form interface for users to create new recipes.
+ * Features include:
+ * - Recipe title and image URL input
+ * - Category selection
+ * - Tag selection
+ * - Dynamic ingredient list management
+ * - Step-by-step directions with add/remove functionality
+ * - Optional notes section
+ * - Integration with Supabase for data persistence
+ */
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  TextField, 
-  Button, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  IconButton, 
-  List, 
-  ListItem, 
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  IconButton,
+  List,
+  ListItem,
   Paper,
-  Divider
-} from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Category, Tag } from '@/types';
-import { Providers } from '@/app/providers';
-import { supabase } from '@/lib/supabase';
-import BackButton from '@/components/BackButton';
-import TagSelector from '@/components/TagSelector';
+  Divider,
+} from "@mui/material";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { Category, Tag } from "@/types";
+import { Providers } from "@/app/providers";
+import { supabase } from "@/lib/supabase";
+import BackButton from "@/components/BackButton";
+import TagSelector from "@/components/TagSelector";
 
 export default function NewRecipePage() {
   const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [category, setCategory] = useState<Category>('dinner');
-  const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [directions, setDirections] = useState<string[]>(['']);
-  const [notes, setNotes] = useState('');
+  const [title, setTitle] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [category, setCategory] = useState<Category>("dinner");
+  const [ingredients, setIngredients] = useState<string[]>([""]);
+  const [directions, setDirections] = useState<string[]>([""]);
+  const [notes, setNotes] = useState("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, '']);
+    setIngredients([...ingredients, ""]);
   };
 
   const handleIngredientChange = (index: number, value: string) => {
@@ -55,7 +69,7 @@ export default function NewRecipePage() {
   };
 
   const handleAddDirection = () => {
-    setDirections([...directions, '']);
+    setDirections([...directions, ""]);
   };
 
   const handleDirectionChange = (index: number, value: string) => {
@@ -75,23 +89,29 @@ export default function NewRecipePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
-      router.push('/auth');
+      router.push("/auth");
       return;
     }
-    
+
     try {
       // Filter out empty ingredients and directions
-      const filteredIngredients = ingredients.filter(item => item.trim() !== '');
-      const filteredDirections = directions.filter(item => item.trim() !== '');
-      
+      const filteredIngredients = ingredients.filter(
+        (item) => item.trim() !== ""
+      );
+      const filteredDirections = directions.filter(
+        (item) => item.trim() !== ""
+      );
+
       // Insert the recipe
       const { data: recipe, error } = await supabase
-        .from('recipes')
+        .from("recipes")
         .insert({
           title,
           image_url: imageUrl,
@@ -99,35 +119,35 @@ export default function NewRecipePage() {
           ingredients: filteredIngredients,
           directions: filteredDirections,
           notes,
-          user_id: user.id
+          user_id: user.id,
         })
         .select()
         .single();
-      
+
       if (error) {
         throw error;
       }
-      
+
       // If we have tags, insert them into recipe_tags
       if (selectedTags.length > 0) {
-        const recipeTagsToInsert = selectedTags.map(tag => ({
+        const recipeTagsToInsert = selectedTags.map((tag) => ({
           recipe_id: recipe.id,
-          tag_id: tag.id
+          tag_id: tag.id,
         }));
-        
+
         const { error: tagsError } = await supabase
-          .from('recipe_tags')
+          .from("recipe_tags")
           .insert(recipeTagsToInsert);
-        
+
         if (tagsError) {
-          console.error('Error inserting tags:', tagsError);
+          console.error("Error inserting tags:", tagsError);
         }
       }
-      
+
       // Redirect to the recipe page
       router.push(`/recipes/${recipe.id}`);
     } catch (error) {
-      console.error('Error creating recipe:', error);
+      console.error("Error creating recipe:", error);
     } finally {
       setLoading(false);
     }
@@ -136,14 +156,18 @@ export default function NewRecipePage() {
   return (
     <Providers>
       <Container maxWidth="md">
-        <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: '800px', margin: '0 auto', padding: '1.5rem' }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ maxWidth: "800px", margin: "0 auto", padding: "1.5rem" }}
+        >
           <BackButton />
-          
-          <Typography variant="h4" component="h1" sx={{ marginBottom: '2rem' }}>
+
+          <Typography variant="h4" component="h1" sx={{ marginBottom: "2rem" }}>
             Create New Recipe
           </Typography>
-          
-          <Box sx={{ marginBottom: '2rem' }}>
+
+          <Box sx={{ marginBottom: "2rem" }}>
             <TextField
               label="Recipe Title"
               value={title}
@@ -152,7 +176,7 @@ export default function NewRecipePage() {
               required
               margin="normal"
             />
-            
+
             <TextField
               label="Image URL"
               value={imageUrl}
@@ -161,7 +185,7 @@ export default function NewRecipePage() {
               margin="normal"
               placeholder="https://example.com/image.jpg"
             />
-            
+
             <FormControl fullWidth margin="normal">
               <InputLabel id="category-label">Category</InputLabel>
               <Select
@@ -179,33 +203,43 @@ export default function NewRecipePage() {
                 <MenuItem value="sides">Side Dishes</MenuItem>
               </Select>
             </FormControl>
-            
+
             <Box sx={{ mt: 2 }}>
-              <TagSelector 
-                selectedTags={selectedTags} 
-                onChange={setSelectedTags} 
+              <TagSelector
+                selectedTags={selectedTags}
+                onChange={setSelectedTags}
               />
             </Box>
           </Box>
-          
+
           <Divider sx={{ my: 3 }} />
-          
-          <Box sx={{ marginBottom: '2rem' }}>
+
+          <Box sx={{ marginBottom: "2rem" }}>
             <Typography variant="h6" gutterBottom>
               Ingredients
             </Typography>
-            
-            <List sx={{ marginBottom: '1rem' }}>
+
+            <List sx={{ marginBottom: "1rem" }}>
               {ingredients.map((ingredient, index) => (
-                <ListItem key={index} sx={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }} disableGutters>
+                <ListItem
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "0.5rem",
+                  }}
+                  disableGutters
+                >
                   <TextField
                     value={ingredient}
-                    onChange={(e) => handleIngredientChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleIngredientChange(index, e.target.value)
+                    }
                     fullWidth
                     placeholder={`Ingredient ${index + 1}`}
                     margin="dense"
                   />
-                  <IconButton 
+                  <IconButton
                     onClick={() => handleRemoveIngredient(index)}
                     disabled={ingredients.length === 1}
                   >
@@ -214,7 +248,7 @@ export default function NewRecipePage() {
                 </ListItem>
               ))}
             </List>
-            
+
             <Button
               startIcon={<AddIcon />}
               onClick={handleAddIngredient}
@@ -224,25 +258,35 @@ export default function NewRecipePage() {
               Add Ingredient
             </Button>
           </Box>
-          
-          <Box sx={{ marginBottom: '2rem' }}>
+
+          <Box sx={{ marginBottom: "2rem" }}>
             <Typography variant="h6" gutterBottom>
               Directions
             </Typography>
-            
-            <List sx={{ marginBottom: '1rem' }}>
+
+            <List sx={{ marginBottom: "1rem" }}>
               {directions.map((direction, index) => (
-                <ListItem key={index} sx={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1rem' }} disableGutters>
+                <ListItem
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    marginBottom: "1rem",
+                  }}
+                  disableGutters
+                >
                   <TextField
                     value={direction}
-                    onChange={(e) => handleDirectionChange(index, e.target.value)}
+                    onChange={(e) =>
+                      handleDirectionChange(index, e.target.value)
+                    }
                     fullWidth
                     multiline
                     rows={2}
                     placeholder={`Step ${index + 1}`}
                     margin="dense"
                   />
-                  <IconButton 
+                  <IconButton
                     onClick={() => handleRemoveDirection(index)}
                     disabled={directions.length === 1}
                   >
@@ -251,7 +295,7 @@ export default function NewRecipePage() {
                 </ListItem>
               ))}
             </List>
-            
+
             <Button
               startIcon={<AddIcon />}
               onClick={handleAddDirection}
@@ -261,12 +305,12 @@ export default function NewRecipePage() {
               Add Step
             </Button>
           </Box>
-          
-          <Box sx={{ marginBottom: '2rem' }}>
+
+          <Box sx={{ marginBottom: "2rem" }}>
             <Typography variant="h6" gutterBottom>
               Notes
             </Typography>
-            
+
             <TextField
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -276,21 +320,25 @@ export default function NewRecipePage() {
               placeholder="Add any additional notes about the recipe"
             />
           </Box>
-          
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
-            <Button 
-              variant="outlined" 
-              onClick={() => router.back()}
-            >
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "1rem",
+              marginTop: "2rem",
+            }}
+          >
+            <Button variant="outlined" onClick={() => router.back()}>
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              variant="contained" 
+            <Button
+              type="submit"
+              variant="contained"
               color="primary"
               disabled={loading}
             >
-              {loading ? 'Saving...' : 'Save Recipe'}
+              {loading ? "Saving..." : "Save Recipe"}
             </Button>
           </Box>
         </Box>

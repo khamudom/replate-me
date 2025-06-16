@@ -1,3 +1,8 @@
+/**
+ * Root layout component for the Replate Me application.
+ * This file defines the base HTML structure and metadata for all pages.
+ * It includes global styles and sets up the Inter font for consistent typography.
+ */
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

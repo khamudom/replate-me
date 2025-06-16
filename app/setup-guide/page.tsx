@@ -1,3 +1,17 @@
+/**
+ * Setup Guide Page Component
+ *
+ * This page provides a step-by-step guide for setting up the Supabase database
+ * for the Recipe Collection app. It includes instructions for:
+ * - Creating the recipes table
+ * - Setting up tags and recipe_tags tables
+ * - Configuring authentication
+ * - Setting environment variables
+ * - Testing the connection
+ *
+ * The guide is presented as a vertical stepper with interactive navigation.
+ */
+
 "use client";
 
 import React from "react";

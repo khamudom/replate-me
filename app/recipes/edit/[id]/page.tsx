@@ -1,3 +1,14 @@
+/**
+ * Edit Recipe Page Component
+ *
+ * This page component handles the editing of existing recipes. It uses a dynamic route
+ * parameter [id] to identify which recipe to edit. The page renders an EditRecipeForm
+ * component within a Material-UI Container.
+ *
+ * The generateStaticParams function is used to pre-render pages for known recipe IDs
+ * during build time, supporting static exports with dynamic routes.
+ */
+
 import React from "react";
 import { Container } from "@mui/material";
 import { Providers } from "@/app/providers";

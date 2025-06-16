@@ -1,3 +1,16 @@
+/**
+ * Recipe Detail Page Client Component
+ *
+ * This component handles the display and interaction of a single recipe's details.
+ * Features include:
+ * - Display of recipe image, title, and tags
+ * - Tabbed interface for ingredients, directions, and notes
+ * - Edit and delete functionality for recipe owners
+ * - Delete confirmation dialog
+ * - Loading states and error handling
+ * - Responsive layout with Material-UI components
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";

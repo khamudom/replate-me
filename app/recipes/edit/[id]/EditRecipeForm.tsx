@@ -1,3 +1,16 @@
+/**
+ * EditRecipeForm Component
+ *
+ * A form component for editing existing recipes. It allows users to:
+ * - Edit basic recipe information (title, image URL, category)
+ * - Manage ingredients and cooking directions
+ * - Add/edit recipe notes
+ * - Manage recipe tags
+ *
+ * The component handles authentication checks, data fetching, and form submission
+ * with proper error handling and loading states.
+ */
+
 "use client";
 
 import React, { useState, useEffect } from "react";
